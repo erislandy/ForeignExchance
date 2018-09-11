@@ -176,6 +176,8 @@ namespace ForeignExchance.ViewModels
             dialogService = new DialogService();
             dataService = new DataService();
             LoadRates();
+            SourceRate = "CUC";
+            TargetRate = "CUP";
         }
 
         async void LoadRates()

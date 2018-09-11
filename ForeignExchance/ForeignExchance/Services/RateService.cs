@@ -38,6 +38,21 @@ namespace ForeignExchance.Services
                     Code = "BND",
                     TaxtRate = 1.363651,
                     Name = "Brunei Dollar"
+                },
+
+                 new Rate()
+                {
+                    RateId = 19,
+                    Code = "CUC",
+                    TaxtRate = 1,
+                    Name = "CUC"
+                },
+                  new Rate()
+                {
+                    RateId = 20,
+                    Code = "CUP",
+                    TaxtRate = 25,
+                    Name = "CUP"
                 }
             };
             return list;
