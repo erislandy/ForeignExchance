@@ -161,6 +161,24 @@ namespace ForeignExchance.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rates loaded from internet..
+        /// </summary>
+        public static string StatusInternetConnection {
+            get {
+                return ResourceManager.GetString("StatusInternetConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rates loades from database local.
+        /// </summary>
+        public static string StatusLocalConnection {
+            get {
+                return ResourceManager.GetString("StatusLocalConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Target Rate:.
         /// </summary>
         public static string TargetRateLabel {

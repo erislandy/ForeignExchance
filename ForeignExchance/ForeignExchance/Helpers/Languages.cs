@@ -78,6 +78,16 @@ namespace ForeignExchance.Helpers
             get { return Resource.Error; }
         }
 
+        public static string StatusInternetConnection
+        {
+            get { return Resource.StatusInternetConnection; }
+        }
+
+        public static string StatusLocalConnection
+        {
+            get { return Resource.StatusLocalConnection; }
+        }
+
     }
 
 }

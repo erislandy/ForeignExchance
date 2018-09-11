@@ -9,7 +9,7 @@ namespace ForeignExchance.ViewModels
     using System.ComponentModel;
     using System.Net.Http;
     using System.Windows.Input;
-
+    using System.Threading.Tasks;
     using Xamarin.Forms;
     using GalaSoft.MvvmLight.Command;
     using Newtonsoft.Json;
@@ -28,7 +28,10 @@ namespace ForeignExchance.ViewModels
 
         #region Services
         ApiService apiService;
+        DataService dataService;
+        DialogService dialogService;
         #endregion
+
         #region Attributes
         bool _isRunning;
         bool _isEnabled;
@@ -36,6 +39,7 @@ namespace ForeignExchance.ViewModels
         string _sourceRate;
         string _status;
         string _targetRate;
+        List<Rate> rates;
         #endregion
 
         #region Properties
@@ -169,6 +173,8 @@ namespace ForeignExchance.ViewModels
         public MainViewModel()
         {
             apiService = new ApiService();
+            dialogService = new DialogService();
+            dataService = new DataService();
             LoadRates();
         }
 
@@ -176,22 +182,58 @@ namespace ForeignExchance.ViewModels
         {
             IsRunning = true;
             Result = Lenguages.Loading;
-            var response = await apiService.GetList<Rate>(
-                                            "http://apiexchangerates.azurewebsites.net",
-                                            "/api/Rates");
-            if (!response.IsSucces)
+
+            var connection = await apiService.CheckConnection();
+            if (!connection.IsSucces)
+            {
+                LoadLocalData();
+            }
+            else
+            {
+                await LoadFromApi();
+            }
+            if(rates.Count == 0)
             {
                 IsRunning = false;
-                Result = response.Message;
+                IsEnabled = false;
+                Result = "There are not internet connection and not load previosly rates." +
+                    "Please try again width internet connection";
+                Status = "Not rate loaded";
                 return;
-                
             }
 
-            Rates = new ObservableCollection<Rate>((List<Rate>)response.Result);
+            Rates = new ObservableCollection<Rate>(rates);
             IsRunning = false;
             IsEnabled = true;
             Result = Lenguages.Ready;
 
+        }
+
+        private void LoadLocalData()
+        {
+            rates = dataService.Get<Rate>(false);
+            Status = Lenguages.StatusLocalConnection;
+        }
+
+        private async Task LoadFromApi()
+        {
+            var url = "http://apiexchangerates.azurewebsites.net"; //Application.Current.Resources["URLAPI"].ToString();
+            var response = await apiService.GetList<Rate>(
+                                            url,
+                                            "/api/Rates");
+            if (!response.IsSucces)
+            {
+                LoadLocalData();
+                return;
+
+            }
+            rates = (List<Rate>)response.Result;
+
+            //Storage data Local
+            dataService.DeleteAll<Rate>();
+            dataService.Save(rates);
+
+            Status = Lenguages.StatusInternetConnection;
         }
         #endregion
 
@@ -207,39 +249,35 @@ namespace ForeignExchance.ViewModels
         {
             if (string.IsNullOrEmpty(Amount))
             {
-                await Application.Current.MainPage.DisplayAlert(
+                await dialogService.ShowMessage(
                     Lenguages.Error,
-                    Lenguages.AmountNumericValidation,
-                    Lenguages.Accept);
+                    Lenguages.AmountNumericValidation);
                 return;
             }
 
             decimal amount = 0;
             if(!decimal.TryParse(Amount, out amount))
             {
-                await Application.Current.MainPage.DisplayAlert(
+                await dialogService.ShowMessage(
                               Lenguages.Error,
-                              Lenguages.AmountNumericValidation,
-                              Lenguages.Accept);
+                              Lenguages.AmountNumericValidation);
                 return;
 
             }
 
             if (string.IsNullOrEmpty(SourceRate))
             {
-                await Application.Current.MainPage.DisplayAlert(
+                await dialogService.ShowMessage(
                     Lenguages.Error,
-                    Lenguages.SourceRateValidation,
-                    Lenguages.Accept);
+                    Lenguages.SourceRateValidation);
                 return;
             }
 
             if (string.IsNullOrEmpty(TargetRate))
             {
-                await Application.Current.MainPage.DisplayAlert(
+                await dialogService.ShowMessage(
                     Lenguages.Error,
-                    Lenguages.TargetRateValidation,
-                    Lenguages.Accept);
+                    Lenguages.TargetRateValidation);
                 return;
             }
 
@@ -248,10 +286,9 @@ namespace ForeignExchance.ViewModels
 
             if(sourceRate == null || targetRate == null)
             {
-                await Application.Current.MainPage.DisplayAlert(
+                await dialogService.ShowMessage(
                     Lenguages.Error,
-                    "Rate not found",
-                    Lenguages.Accept);
+                    "Rate not found");
                 return;
             }
 

@@ -150,6 +150,12 @@
   <data name="SourceRateValidation" xml:space="preserve">
     <value>Debes seleccionar una moneda origen.</value>
   </data>
+  <data name="StatusInternetConnection" xml:space="preserve">
+    <value>Tasas cargadas desde internet</value>
+  </data>
+  <data name="StatusLocalConnection" xml:space="preserve">
+    <value>Tasas cargadas desde base de datos local</value>
+  </data>
   <data name="TargetRateLabel" xml:space="preserve">
     <value>Moneda destino:</value>
   </data>

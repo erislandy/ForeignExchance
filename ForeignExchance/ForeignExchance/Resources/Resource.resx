@@ -150,6 +150,12 @@
   <data name="SourceRateValidation" xml:space="preserve">
     <value>You must select a source rate.</value>
   </data>
+  <data name="StatusInternetConnection" xml:space="preserve">
+    <value>Rates loaded from internet.</value>
+  </data>
+  <data name="StatusLocalConnection" xml:space="preserve">
+    <value>Rates loades from database local</value>
+  </data>
   <data name="TargetRateLabel" xml:space="preserve">
     <value>Target Rate:</value>
   </data>
